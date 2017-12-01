@@ -1,5 +1,6 @@
 package tech.simter.jxls.ext;
 
+import org.jxls.builder.xls.XlsCommentAreaBuilder;
 import org.jxls.common.Context;
 import org.jxls.util.JxlsHelper;
 
@@ -19,6 +20,11 @@ import java.util.Map;
  * @author RJ
  */
 public class JxlsUtils {
+  static {
+    // global add custom each-merge command to XlsCommentAreaBuilder
+    XlsCommentAreaBuilder.addCommandMapping(EachMergeCommand.COMMAND_NAME, EachMergeCommand.class);
+  }
+
   /**
    * Render the excel template with the specified data to the {@link OutputStream}.
    *
@@ -46,7 +52,7 @@ public class JxlsUtils {
     }
   }
 
-  private static Context convert2Context(Map<String, Object> data) {
+  public static Context convert2Context(Map<String, Object> data) {
     Context context = new Context();
     if (data != null) data.forEach(context::putVar);
     return context;
