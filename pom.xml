@@ -4,10 +4,11 @@
   <parent>
     <groupId>tech.simter</groupId>
     <artifactId>simter-parent</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3.0</version>
     <relativePath/>
   </parent>
   <artifactId>simter-jxls-ext</artifactId>
+  <version>0.3.0</version>
   <packaging>jar</packaging>
   <name>simter-jxls-ext</name>
   <description>Simter Jxls Extensions</description>
