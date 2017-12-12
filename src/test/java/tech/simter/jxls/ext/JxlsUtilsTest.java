@@ -26,10 +26,10 @@ public class JxlsUtilsTest {
   @Test
   public void xlsx() throws Exception {
     // template
-    InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions.xlsx");
+    InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions-complex.xlsx");
 
     // output to
-    File out = new File("target/common-functions-result.xlsx");
+    File out = new File("target/common-functions-complex-result.xlsx");
     if (out.exists()) out.delete();
     OutputStream output = new FileOutputStream(out);
 
@@ -47,10 +47,10 @@ public class JxlsUtilsTest {
   @Test
   public void xls() throws Exception {
     // from template
-    InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions.xls");
+    InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions-complex.xls");
 
     // output to
-    File out = new File("target/common-functions-result.xls");
+    File out = new File("target/common-functions-complex-result.xls");
     if (out.exists()) out.delete();
     OutputStream output = new FileOutputStream(out);
 
