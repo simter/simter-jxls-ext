@@ -1,4 +1,4 @@
-# [simter-jxls-ext](https://github.com/simter/simter-jxls-ext) [[中文]]
+# [simter-jxls-ext](https://github.com/simter/simter-jxls-ext) [[English]]
 
 Simter [Jxls] Extensions. Includes:
 - Common Functions
@@ -12,7 +12,7 @@ Simter [Jxls] Extensions. Includes:
 
 See the usage code bellow.
 
-## Installation
+## 安装
 
 ```xml
 <dependency>
@@ -22,12 +22,12 @@ See the usage code bellow.
 </dependency>
 ```
 
-## Requirement
+## 要求
 
 - [Jxls] 2+
 - Java 8+
 
-## Usage
+## 使用
 
 ### Common Functions
 
@@ -50,26 +50,26 @@ OutputStream output = ...;
 JxlsHelper.getInstance().processTemplate(template, output, context);
 ```
 
-Check the unit test code from [CommonFunctionsTest.java]. The [template][common-functions-template] and render result show bellow:
+相应的单元测试代码参见 [CommonFunctionsTest.java]. [Excel 模板][common-functions-template] 和渲染结果截图如下:
 ![common-functions.png]
 
-### EachMergeCommand - Auto merge cells
+### EachMergeCommand - 自动合并单元格
 
 ```java
-// global add custom each-merge command to XlsCommentAreaBuilder
+// 全局注册自定义的 each-merge 指令到 XlsCommentAreaBuilder
 XlsCommentAreaBuilder.addCommandMapping(EachMergeCommand.COMMAND_NAME, EachMergeCommand.class);
 
-// generate a main-sub structure data
+// 生成 "主-从" 结构的数据
 Context context = new Context();
 context.putVar("rows", generateRowsData());
 
-// render template
+// 渲染模板
 InputStream template = ...;
 OutputStream output = ...;
 JxlsHelper.getInstance().processTemplate(template, output, context);
 ```
 
-The `generateRowsData()` method generates the bellow structure data:
+方法 `generateRowsData()` 生成的数据结构如下:
 
 ```javascript
 [
@@ -85,55 +85,55 @@ The `generateRowsData()` method generates the bellow structure data:
 ]
 ```
 
-Check the unit test code from [EachMergeCommandTest.java]. The [template][each-merge-template] and render result show bellow:
+相应的单元测试代码参见 [EachMergeCommandTest.java]. [Excel 模板][each-merge-template] 和渲染结果截图如下:
 ![each-merge.png]
 
-## Build
+## 构建
 
 ```bash
 mvn clean package
 ```
 
-## Deploy
+## 发布
 
-First take a look at [simter-parent] deploy config.
+请先查看 [simter-parent] 的发布配置说明。
 
-### Deploy to LAN Nexus Repository
+### 发布到局域网 Nexus 仓库
 
 ```bash
 mvn clean deploy -P lan
 ```
 
-### Deploy to Sonatype Repository
+### 发布到 Sonatype 仓库
 
 ```bash
 mvn clean deploy -P sonatype
 ```
 
-After deployed, login into <https://oss.sonatype.org>. Through `Staging Repositories`, search this package, 
-then close and release it. After couple hours, it will be synced 
-to [Maven Central Repository](http://repo1.maven.org/maven2/tech/simter/simter-jxls-ext).
+发布成功后登陆到 <https://oss.sonatype.org>，在 `Staging Repositories` 找到这个包，然后将其 close 和 release。
+过几个小时后，就会自动同步到 [Maven 中心仓库](http://repo1.maven.org/maven2/tech/simter/simter-jxls-ext) 了。
 
-### Deploy to Bintray Repository
+### 发布到 Bintray 仓库
 
 ```bash
 mvn clean deploy -P bintray
 ```
 
-Will deploy to `https://api.bintray.com/maven/simter/maven/tech.simter:simter-jxls-ext/;publish=1`.
-So first create a package `https://bintray.com/simter/maven/tech.simter:simter-jxls-ext` on Bintray.
-After deployed, check it from <https://jcenter.bintray.com/tech/simter/simter-jxls-ext>.
+发布之前要先在 Bintray 创建 package `https://bintray.com/simter/maven/tech.simter:simter-jxls-ext`。
+发布到的地址为 `https://api.bintray.com/maven/simter/maven/tech.simter:simter-jxls-ext/;publish=1`。
+发布成功后可以到 <https://jcenter.bintray.com/tech/simter/simter-jxls-ext> 检查一下结果。
 
+
+[English]: https://github.com/simter/simter-jxls-ext/blob/master/README.md
+[simter-parent]: https://github.com/simter/simter-parent/blob/master/docs/README.zh-cn.md
 
 [Jxls]: http://jxls.sourceforge.net
 [oss.sonatype.org]: https://oss.sonatype.org
-[simter-parent]: https://github.com/simter/simter-parent
-[中文]: https://github.com/simter/simter-jxls-ext/blob/master/docs/README.zh-cn.md
 
 [CommonFunctionsTest.java]: https://github.com/simter/simter-jxls-ext/blob/master/src/test/java/tech/simter/jxls/ext/CommonFunctionsTest.java#L77
 [common-functions-template]: https://github.com/simter/simter-jxls-ext/raw/master/src/test/resources/templates/common-functions.xlsx
-[common-functions.png]: docs/common-functions.png
+[common-functions.png]: common-functions.png
 
 [EachMergeCommandTest.java]: https://github.com/simter/simter-jxls-ext/blob/master/src/test/java/tech/simter/jxls/ext/EachMergeCommandTest.java#L30
 [each-merge-template]: https://github.com/simter/simter-jxls-ext/raw/master/src/test/resources/templates/each-merge.xlsx
-[each-merge.png]: docs/each-merge.png
+[each-merge.png]: each-merge.png
