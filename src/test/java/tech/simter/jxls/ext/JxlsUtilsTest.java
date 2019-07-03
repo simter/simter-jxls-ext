@@ -1,6 +1,6 @@
 package tech.simter.jxls.ext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,17 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The Excel Utils test.
  *
  * @author RJ
  */
-public class JxlsUtilsTest {
+class JxlsUtilsTest {
   @Test
-  public void xlsx() throws Exception {
+  void xlsx() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions-complex.xlsx");
 
@@ -40,12 +40,12 @@ public class JxlsUtilsTest {
     JxlsUtils.renderTemplate(template, data, output);
 
     // verify
-    assertThat(out.exists(), is(true));
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertTrue(out.exists());
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   @Test
-  public void xls() throws Exception {
+  void xls() throws Exception {
     // from template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions-complex.xls");
 
@@ -61,8 +61,8 @@ public class JxlsUtilsTest {
     JxlsUtils.renderTemplate(template, data, output);
 
     // verify
-    assertThat(out.exists(), is(true));
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertTrue(out.exists());
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   // generate test data

@@ -1,6 +1,6 @@
 package tech.simter.jxls.ext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jxls.common.Context;
 import org.jxls.util.JxlsHelper;
 
@@ -12,69 +12,68 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Common Functions test.
  *
  * @author RJ
  */
-public class CommonFunctionsTest {
+class CommonFunctionsTest {
   private final CommonFunctions fn = CommonFunctions.getSingleton();
 
   @Test
-  public void formatNumber() {
-    assertThat(fn.round(null, 0), nullValue());
-    assertThat(fn.format(123456789.1, "#,###.00"), is("123,456,789.10"));
-    assertThat(fn.format(123456789.12, "#,###.00"), is("123,456,789.12"));
-    assertThat(fn.format(123456789.124, "#,###.00"), is("123,456,789.12"));
-    assertThat(fn.format(123456789.125, "#,###.00"), is("123,456,789.12"));
-    assertThat(fn.format(123456789.126, "#,###.00"), is("123,456,789.13"));
-    assertThat(fn.format(1123456789, "#,###.00"), is("1,123,456,789.00"));
+  void formatNumber() {
+    assertNull(fn.round(null, 0));
+    assertEquals("123,456,789.10", fn.format(123456789.1, "#,###.00"));
+    assertEquals("123,456,789.12", fn.format(123456789.12, "#,###.00"));
+    assertEquals("123,456,789.12", fn.format(123456789.124, "#,###.00"));
+    assertEquals("123,456,789.12", fn.format(123456789.125, "#,###.00"));
+    assertEquals("123,456,789.13", fn.format(123456789.126, "#,###.00"));
+    assertEquals("1,123,456,789.00", fn.format(1123456789, "#,###.00"));
   }
 
   @Test
-  public void roundNumber() {
-    assertThat(fn.round(null, 0), nullValue());
-    assertThat(fn.round(null, 1), nullValue());
-    assertThat(fn.round(null, 2), nullValue());
-    assertThat(fn.round(123456789, 0), is(new BigDecimal(123456789)));
-    assertThat(fn.round(123456789.45, 0), is(new BigDecimal(123456789)));
-    assertThat(fn.round(123456789.45, 1), is(new BigDecimal("123456789.5")));
-    assertThat(fn.round(123456789.454, 2), is(new BigDecimal("123456789.45")));
-    assertThat(fn.round(123456789.455, 2), is(new BigDecimal("123456789.46")));
-    assertThat(fn.round(123456789.456, 2), is(new BigDecimal("123456789.46")));
+  void roundNumber() {
+    assertNull(fn.round(null, 0));
+    assertNull(fn.round(null, 1));
+    assertNull(fn.round(null, 2));
+    assertEquals(new BigDecimal(123456789), fn.round(123456789, 0));
+    assertEquals(new BigDecimal(123456789), fn.round(123456789.45, 0));
+    assertEquals(new BigDecimal("123456789.5"), fn.round(123456789.45, 1));
+    assertEquals(new BigDecimal("123456789.45"), fn.round(123456789.454, 2));
+    assertEquals(new BigDecimal("123456789.46"), fn.round(123456789.455, 2));
+    assertEquals(new BigDecimal("123456789.46"), fn.round(123456789.456, 2));
   }
 
   @Test
-  public void toInt() {
-    assertThat(fn.toInt(null), nullValue());
-    assertThat(fn.toInt("123"), is(123));
+  void toInt() {
+    assertNull(fn.toInt(null));
+    assertEquals(123, fn.toInt("123"));
   }
 
   @Test
-  public void concatString() {
-    assertThat(fn.concat(), nullValue());
-    assertThat(fn.concat("abc"), is("abc"));
-    assertThat(fn.concat("ab", "c"), is("abc"));
+  void concatString() {
+    assertNull(fn.concat());
+    assertEquals("abc", fn.concat("abc"));
+    assertEquals("abc", fn.concat("ab", "c"));
   }
 
   @Test
-  public void formatDateTime() {
-    assertThat(fn.format((TemporalAccessor) null, null), nullValue());
-    assertThat(fn.format(Year.of(2017), "yyyy"), is("2017"));
-    assertThat(fn.format(YearMonth.of(2017, 1), "yyyy-MM"), is("2017-01"));
-    assertThat(fn.format(Month.of(1), "MM"), is("01"));
-    assertThat(fn.format(LocalDate.of(2017, 1, 2), "yyyy-MM-dd"), is("2017-01-02"));
-    assertThat(fn.format(LocalDate.of(2017, 1, 12), "yyyy/M/d"), is("2017/1/12"));
-    assertThat(fn.format(LocalDateTime.of(2017, 1, 2, 10, 20, 30), "yyyy-MM-dd HH:mm:ss"), is("2017-01-02 10:20:30"));
-    assertThat(fn.format(LocalTime.of(13, 20, 30), "HH:mm:ss"), is("13:20:30"));
+  void formatDateTime() {
+    assertNull(fn.format((TemporalAccessor) null, null));
+    assertEquals("2017", fn.format(Year.of(2017), "yyyy"));
+    assertEquals("2017-01", fn.format(YearMonth.of(2017, 1), "yyyy-MM"));
+    assertEquals("01", fn.format(Month.of(1), "MM"));
+    assertEquals("2017-01-02", fn.format(LocalDate.of(2017, 1, 2), "yyyy-MM-dd"));
+    assertEquals("2017/1/12", fn.format(LocalDate.of(2017, 1, 12), "yyyy/M/d"));
+    assertEquals("2017-01-02 10:20:30", fn.format(LocalDateTime.of(2017, 1, 2, 10, 20, 30), "yyyy-MM-dd HH:mm:ss"));
+    assertEquals("13:20:30", fn.format(LocalTime.of(13, 20, 30), "HH:mm:ss"));
   }
 
   @Test
-  public void renderTemplate() throws Exception {
+  void renderTemplate() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions.xlsx");
 

@@ -1,6 +1,6 @@
 package tech.simter.jxls.ext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jxls.builder.xls.XlsCommentAreaBuilder;
 import org.jxls.common.Context;
 import org.jxls.util.JxlsHelper;
@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static tech.simter.jxls.ext.JxlsUtils.convert2Context;
 
 /**
@@ -23,11 +22,10 @@ import static tech.simter.jxls.ext.JxlsUtils.convert2Context;
  *
  * @author RJ
  */
-public class EachMergeCommandTest {
+class EachMergeCommandTest {
   // one main command with one sub command
   @Test
-  @SuppressWarnings("unchecked")
-  public void mergeWithOneSubCommand() throws Exception {
+  void mergeWithOneSubCommand() throws Exception {
     // global add custom each-merge command to XlsCommentAreaBuilder
     XlsCommentAreaBuilder.addCommandMapping(EachMergeCommand.COMMAND_NAME, EachMergeCommand.class);
 
@@ -46,12 +44,11 @@ public class EachMergeCommandTest {
     JxlsHelper.getInstance().processTemplate(template, output, context);
 
     // verify
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   @Test
-  @SuppressWarnings("unchecked")
-  public void mergeWithOneSubCommand1() throws Exception {
+  void mergeWithOneSubCommand1() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/each-merge.xlsx");
 
@@ -67,13 +64,12 @@ public class EachMergeCommandTest {
     JxlsUtils.renderTemplate(template, data, output);
 
     // verify
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   // one main command with two sub commands
   @Test
-  @SuppressWarnings("unchecked")
-  public void mergeWithTwoSubCommand() throws Exception {
+  void mergeWithTwoSubCommand() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/each-merge2.xlsx");
 
@@ -90,7 +86,7 @@ public class EachMergeCommandTest {
     JxlsUtils.renderTemplate(template, data, output);
 
     // verify
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   @SuppressWarnings("unchecked")

@@ -1,6 +1,6 @@
 package tech.simter.jxls.ext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,17 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The Jxls test.
  *
  * @author RJ
  */
-public class TwoSubListTest {
+class TwoSubListTest {
   @Test
-  public void test() throws Exception {
+  void test() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/two-sub-list.xlsx");
 
@@ -37,7 +36,7 @@ public class TwoSubListTest {
     JxlsUtils.renderTemplate(template, data, output);
 
     // verify
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   private Map<String, Object> generateData() {

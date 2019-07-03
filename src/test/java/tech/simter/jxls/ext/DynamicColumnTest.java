@@ -1,6 +1,6 @@
 package tech.simter.jxls.ext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,17 +8,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The Jxls test.
  *
  * @author RJ
  */
-public class DynamicColumnTest {
+class DynamicColumnTest {
   @Test
-  public void test() throws Exception {
+  void test() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/dynamic-column.xlsx");
 
@@ -34,7 +33,7 @@ public class DynamicColumnTest {
     JxlsUtils.renderTemplate(template, data, output);
 
     // verify
-    assertThat(out.getTotalSpace() > 0, is(true));
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
   private Map<String, Object> generateData() {
