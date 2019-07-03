@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>tech.simter</groupId>
-    <artifactId>simter-parent</artifactId>
-    <version>${revision}</version>
-    <relativePath>../simter-parent</relativePath>
+    <artifactId>simter-dependencies</artifactId>
+    <version>1.2.0</version>
+    <relativePath/>
   </parent>
   <artifactId>simter-jxls-ext</artifactId>
   <packaging>jar</packaging>
