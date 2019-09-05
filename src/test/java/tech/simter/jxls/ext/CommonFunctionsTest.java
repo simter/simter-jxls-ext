@@ -101,6 +101,15 @@ class CommonFunctionsTest {
   }
 
   @Test
+  void timeSubtract() {
+    assertNull(fn.timeSubtract( null, null));
+    LocalDateTime time = LocalDateTime.now();
+    assertEquals("10m",fn.timeSubtract(time,time.plusMinutes(10)));
+    assertEquals("10h10m",fn.timeSubtract(time,time.plusMinutes(10).plusHours(10)));
+    assertEquals("10d10h10m",fn.timeSubtract(time,time.plusMinutes(10).plusHours(10).plusDays(10)));
+  }
+
+  @Test
   void renderTemplate() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions.xlsx");

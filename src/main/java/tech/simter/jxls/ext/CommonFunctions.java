@@ -4,6 +4,8 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
@@ -159,5 +161,30 @@ public final class CommonFunctions {
    */
   public String joinProperty(List<Object> list, String name) {
     return joinProperty(list, name, ", ");
+  }
+
+  /**
+   * 计算两个时间差，endTime 必须比 startTime 大
+   *
+   * @param startTime 开始时间
+   * @param endTime   结束时间
+   * @return 格式化的字符串，格式如：10d10h10m
+   */
+  public String timeSubtract(LocalDateTime startTime, LocalDateTime endTime) {
+    if (startTime == null || endTime == null) {
+      return null;
+    }
+    Duration duration = Duration.between(startTime, endTime);
+    StringBuffer formatTime = new StringBuffer();
+    if (duration.toDays() > 0) {
+      formatTime.append(duration.toDays() + "d");
+    }
+    if (duration.toHours() % 24 > 0) {
+      formatTime.append((duration.toHours() % 24) + "h");
+    }
+    if (duration.toMinutes() % 60 > 0) {
+      formatTime.append((duration.toMinutes() % 60) + "m");
+    }
+    return formatTime.toString();
   }
 }
