@@ -76,6 +76,53 @@ class CommonFunctionsTest {
   }
 
   @Test
+  void formatDuration() {
+    assertNull(fn.format((Duration) null));
+    assertEquals("1D", fn.format(Duration.ofDays(1)));
+    assertEquals("1H", fn.format(Duration.ofHours(1)));
+    assertEquals("1M", fn.format(Duration.ofMinutes(1)));
+    assertEquals("1S", fn.format(Duration.ofSeconds(1)));
+    assertEquals("1D1H", fn.format(Duration.ofDays(1).plusHours(1)));
+    assertEquals("23H", fn.format(Duration.ofDays(1).minusHours(1)));
+    assertEquals("-1D", fn.format(Duration.ofDays(-1)));
+    assertEquals("-1D1H", fn.format(Duration.ofDays(-1).plusHours(-1)));
+    assertEquals("-23H", fn.format(Duration.ofDays(-1).plusHours(1)));
+  }
+
+  @Test
+  void duration() {
+    // null
+    assertNull(fn.duration(null, null));
+    assertNull(fn.duration(null, LocalDateTime.now()));
+    assertNull(fn.duration(LocalDateTime.now(), null));
+
+    LocalDateTime startTime = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
+    assertEquals("1D", fn.duration(startTime, startTime.plusDays(1)));
+    assertEquals("-1D", fn.duration(startTime.plusDays(1), startTime));
+    assertEquals("1H", fn.duration(startTime, startTime.plusHours(1)));
+    assertEquals("-1H", fn.duration(startTime.plusHours(1), startTime));
+    assertEquals("1M", fn.duration(startTime, startTime.plusMinutes(1)));
+    assertEquals("-1M", fn.duration(startTime.plusMinutes(1), startTime));
+    assertEquals("1S", fn.duration(startTime, startTime.plusSeconds(1)));
+    assertEquals("-1S", fn.duration(startTime.plusSeconds(1), startTime));
+
+    assertEquals("1D1H", fn.duration(startTime, startTime.plusDays(1).plusHours(1)));
+    assertEquals("-1D1H", fn.duration(startTime.plusDays(1).plusHours(1), startTime));
+    assertEquals("1D1H", fn.duration(startTime, startTime.plusHours(24 + 1)));
+    assertEquals("-1D1H", fn.duration(startTime.plusHours(24 + 1), startTime));
+
+    assertEquals("1D1M", fn.duration(startTime, startTime.plusDays(1).plusMinutes(1)));
+    assertEquals("-1D1M", fn.duration(startTime.plusDays(1).plusMinutes(1), startTime));
+    assertEquals("1D1M", fn.duration(startTime, startTime.plusMinutes(24 * 60 + 1)));
+    assertEquals("-1D1M", fn.duration(startTime.plusMinutes(24 * 60 + 1), startTime));
+
+    assertEquals("1D1S", fn.duration(startTime, startTime.plusDays(1).plusSeconds(1)));
+    assertEquals("-1D1S", fn.duration(startTime.plusDays(1).plusSeconds(1), startTime));
+    assertEquals("1D1S", fn.duration(startTime, startTime.plusSeconds(24 * 60 * 60 + 1)));
+    assertEquals("-1D1S", fn.duration(startTime.plusSeconds(24 * 60 * 60 + 1), startTime));
+  }
+
+  @Test
   void join() {
     assertEquals("s1, s2", fn.join(Arrays.asList("s1", null, "s2")));
     assertEquals("s1-s2", fn.join(Arrays.asList("s1", null, "s2"), "-"));

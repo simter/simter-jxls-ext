@@ -4,7 +4,9 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +45,53 @@ public final class CommonFunctions {
    */
   public String format(TemporalAccessor temporal, String pattern) {
     return temporal == null ? null : DateTimeFormatter.ofPattern(pattern).format(temporal);
+  }
+
+  /**
+   * Format a duration to a string.
+   * <p>
+   * The format of the returned string will be '{@code nDnHnMnS}',
+   * where n is the relevant days, hours, minutes or seconds part of the duration.
+   * If a section has a zero value, it is omitted.
+   *
+   * @param duration the duration
+   * @return if the duration is null, return null. Otherwise return an not null '{@code nDnHnMnS}' representation of this duration
+   */
+  public String format(Duration duration) {
+    if (duration == null) return null;
+
+    StringBuilder buffer = new StringBuilder();
+    if (duration.isNegative()) buffer.append("-");
+    duration = duration.abs();
+    if (duration.toDays() > 0) {
+      buffer.append(duration.toDays()).append("D");
+    }
+    if (duration.toHours() % 24 > 0) {
+      buffer.append(duration.toHours() % 24).append("H");
+    }
+    if (duration.toMinutes() % 60 > 0) {
+      buffer.append(duration.toMinutes() % 60).append("M");
+    }
+    if (duration.getSeconds() % 60 > 0) {
+      buffer.append(duration.getSeconds() % 60).append("S");
+    }
+    return buffer.toString();
+  }
+
+  /**
+   * Calculate two time's duration and format to a string with pattern '{@code nDnHnMnS}'.
+   * <p>
+   * The format of the returned string will be '{@code nDnHnMnS}', where n is
+   * the relevant hours, minutes or seconds part of the duration.
+   * If a section has a zero value, it is omitted.
+   *
+   * @param startTime the start time
+   * @param endTime   the end time
+   * @return if the startTime or endTime is null, return null. Otherwise return an not null '{@code nDnHnMnS}' representation
+   */
+  public String duration(Temporal startTime, Temporal endTime) {
+    if (startTime == null || endTime == null) return null;
+    else return format(Duration.between(startTime, endTime));
   }
 
   /**
