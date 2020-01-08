@@ -28,33 +28,33 @@ public final class CommonFunctions {
   }
 
   /**
-   * java.time 的格式化。
+   * Format java.time.
    *
-   * @param temporal 值
-   * @param pattern  格式
-   * @return 格式化后的值
+   * @param temporal javaTime instance
+   * @param pattern  the formatter
+   * @return the formatted value
    */
   public String format(TemporalAccessor temporal, String pattern) {
     return temporal == null ? null : DateTimeFormatter.ofPattern(pattern).format(temporal);
   }
 
   /**
-   * 数字的格式化。
+   * Format number.
    *
-   * @param number  值
-   * @param pattern 格式
-   * @return 格式化后的值
+   * @param number  the number value
+   * @param pattern the formatter
+   * @return the formatted value
    */
   public String format(Number number, String pattern) {
     return number == null ? null : new DecimalFormat(pattern).format(number);
   }
 
   /**
-   * 数字的四舍五入。
+   * Round number half up with special scale.
    *
-   * @param number 值
-   * @param scale  小数位数
-   * @return 四舍五入后的值
+   * @param number the number value
+   * @param scale  the scale value
+   * @return half up number value
    */
   public Number round(Number number, int scale) {
     return number == null ? null : (number instanceof BigDecimal ?
@@ -63,10 +63,10 @@ public final class CommonFunctions {
   }
 
   /**
-   * 合并字符串
+   * Concat all param to a string.
    *
-   * @param items 合并项
-   * @return 合并后的字符串
+   * @param items the params
+   * @return a string
    */
   public String concat(Object... items) {
     if (items == null || items.length == 0) return null;
@@ -74,10 +74,10 @@ public final class CommonFunctions {
   }
 
   /**
-   * 转换为整数
+   * Convert string value to a Integer value.
    *
-   * @param str 字符值
-   * @return 整数
+   * @param str the string value
+   * @return an Integer value
    */
   public Integer toInt(String str) {
     return str == null ? null : new Integer(str);
