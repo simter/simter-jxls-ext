@@ -11,6 +11,9 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -73,6 +76,31 @@ class CommonFunctionsTest {
   }
 
   @Test
+  void join() {
+    assertEquals("s1, s2", fn.join(Arrays.asList("s1", null, "s2")));
+    assertEquals("s1-s2", fn.join(Arrays.asList("s1", null, "s2"), "-"));
+  }
+
+  @Test
+  void joinProperty() {
+    Map<String, Object> map = new HashMap<>();
+    map.put("p1", "m1");
+    Bean bean = new Bean();
+    bean.setP1("b1");
+    assertEquals("m1, b1", fn.joinProperty(Arrays.asList(map, bean), "p1"));
+    assertEquals("m1,b1", fn.joinProperty(Arrays.asList(map, bean), "p1", ","));
+    assertEquals("", fn.joinProperty(Arrays.asList(map, bean), "p2", ","));
+
+    bean = new Bean();
+    bean.setP2(2);
+    assertEquals("2", fn.joinProperty(Arrays.asList(map, bean), "p2", ","));
+
+    bean = new Bean();
+    bean.setP3(3);
+    assertEquals("3", fn.joinProperty(Arrays.asList(map, bean), "p3", ","));
+  }
+
+  @Test
   void renderTemplate() throws Exception {
     // template
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/common-functions.xlsx");
@@ -94,6 +122,8 @@ class CommonFunctionsTest {
     context.putVar("date", LocalDate.now());
     context.putVar("time", LocalTime.now());
     context.putVar("str", "123");
+    context.putVar("beans", Arrays.asList(new Bean("p1"), new Bean("p2")));
+    context.putVar("strings", Arrays.asList("s1", "s2"));
 
     // render
     JxlsHelper.getInstance().processTemplate(template, output, context);
