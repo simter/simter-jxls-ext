@@ -1,11 +1,14 @@
 package tech.simter.jxls.ext;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
  * 3) concat string.<br>
  * 4) string to int.<br>
  * 5) join list to string.<br>
+ * 6) join list'item property value to string.<br>
  *
  * @author RJ
  */
@@ -113,5 +117,47 @@ public final class CommonFunctions {
    */
   public String join(List<Object> list) {
     return join(list, ", ");
+  }
+
+  /**
+   * Join special key or property value of list item to a string with a special delimiter.
+   * <p>
+   * Note：null item or null property value would be ignored.
+   *
+   * @param list      the list to join
+   * @param name      the bean property name or map key to get the value
+   * @param delimiter the delimiter to join item
+   * @return a joined string
+   */
+  public String joinProperty(List<Object> list, String name, String delimiter) {
+    return list.stream()
+      .map(item -> {
+        if (item != null) {
+          if (item instanceof Map) return ((Map) item).get(name); // 取 Map 中特定 key 的值
+          else {                                                 // 取 bean 中特定属性的值
+            try {
+              return BeanUtils.getProperty(item, name);
+            } catch (Exception e) {
+              throw new RuntimeException(e);
+            }
+          }
+        } else return null;
+      })
+      .filter(Objects::nonNull)
+      .map(Object::toString)
+      .collect(Collectors.joining(delimiter));
+  }
+
+  /**
+   * Join special key or property value of list item to a string with ", " delimiter.
+   * <p>
+   * Note：null item or null property value would be ignored.
+   *
+   * @param list the list to join
+   * @param name the bean property name or map key to get the value
+   * @return a joined string
+   */
+  public String joinProperty(List<Object> list, String name) {
+    return joinProperty(list, name, ", ");
   }
 }
