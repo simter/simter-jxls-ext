@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -70,6 +71,12 @@ class CommonFunctionsTest {
     assertEquals("2017/1/12", fn.format(LocalDate.of(2017, 1, 12), "yyyy/M/d"));
     assertEquals("2017-01-02 10:20:30", fn.format(LocalDateTime.of(2017, 1, 2, 10, 20, 30), "yyyy-MM-dd HH:mm:ss"));
     assertEquals("13:20:30", fn.format(LocalTime.of(13, 20, 30), "HH:mm:ss"));
+  }
+
+  @Test
+  void join() {
+    assertEquals("s1, s2", fn.join(Arrays.asList("s1", null, "s2")));
+    assertEquals("s1-s2", fn.join(Arrays.asList("s1", null, "s2"), "-"));
   }
 
   @Test

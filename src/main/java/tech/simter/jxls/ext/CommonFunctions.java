@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
  * 2) format number.<br>
  * 3) concat string.<br>
  * 4) string to int.<br>
+ * 5) join list to string.<br>
  *
  * @author RJ
  */
@@ -81,5 +84,34 @@ public final class CommonFunctions {
    */
   public Integer toInt(String str) {
     return str == null ? null : new Integer(str);
+  }
+
+  /**
+   * Join all list item to a string with a special delimiter.
+   * <p>
+   * Note：null item would be ignored.
+   *
+   * @param list      the list to join
+   * @param delimiter the delimiter to join item
+   * @return a joined string
+   */
+  public String join(List<Object> list, String delimiter) {
+    if (delimiter == null) delimiter = ", ";
+    return list.stream()
+      .filter(Objects::nonNull)
+      .map(Object::toString)
+      .collect(Collectors.joining(delimiter));
+  }
+
+  /**
+   * Join all list item to a string with ", " delimiter.
+   * <p>
+   * Note：null item would be ignored.
+   *
+   * @param list the list to join
+   * @return a joined string
+   */
+  public String join(List<Object> list) {
+    return join(list, ", ");
   }
 }
