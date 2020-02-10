@@ -4,7 +4,7 @@
   <parent>
     <groupId>tech.simter</groupId>
     <artifactId>simter-dependencies</artifactId>
-    <version>1.3.0-M11</version>
+    <version>1.3.0-M13</version>
     <relativePath/>
   </parent>
   <artifactId>simter-jxls-ext</artifactId>
