@@ -1,5 +1,9 @@
 # simter-jxls-ext changelog
 
+## 1.2.0-M2 - 2020-02-10
+
+- Upgrade to simter-1.3.0-M13
+
 ## 1.2.0-M1 - 2020-01-08
 
 - Upgrade to simter-1.3.0-M11
