@@ -51,6 +51,7 @@ JxlsHelper.getInstance().processTemplate(template, output, context);
 ```
 
 相应的单元测试代码参见 [CommonFunctionsTest.java]. [Excel 模板][common-functions-template] 和渲染结果截图如下:
+
 ![common-functions.png]
 
 ### EachMergeCommand - 自动合并单元格
@@ -86,6 +87,7 @@ JxlsHelper.getInstance().processTemplate(template, output, context);
 ```
 
 相应的单元测试代码参见 [EachMergeCommandTest.java]. [Excel 模板][each-merge-template] 和渲染结果截图如下:
+
 ![each-merge.png]
 
 ## 构建
