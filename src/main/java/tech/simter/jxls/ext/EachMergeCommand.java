@@ -92,7 +92,6 @@ public class EachMergeCommand extends EachCommand {
 
     private int childRow;
     private int parentProcessed;
-    private String sheetName;
 
     MergeCellListener(Transformer transformer, AreaRef parent, List<AreaRef> children, int parentCount) {
       this.transformer = (PoiTransformer) transformer;
@@ -126,45 +125,56 @@ public class EachMergeCommand extends EachCommand {
 
     @Override
     public void beforeApplyAtCell(CellRef cellRef, Context context) {
-    }
-
-    @Override
-    public void afterApplyAtCell(CellRef cellRef, Context context) {
+      if (logger.isDebugEnabled()) {
+        if (cellRef.getCol() == parentStartColumn) // parent command excel-row
+          logger.debug("start parent: cellRef={} [{}, {}]", cellRef, cellRef.getRow(), cellRef.getCol());
+      }
     }
 
     @Override
     public void beforeTransformCell(CellRef srcCell, CellRef targetCell, Context context) {
     }
 
-    // remember that all sub command AreaListener is invoked before parent command AreaListener.
-    // This class use this feature to do the merge work.
     @Override
     public void afterTransformCell(CellRef srcCell, CellRef targetCell, Context context) {
-      if (parentProcessed == 0) this.sheetName = targetCell.getSheetName();
+    }
 
-      if (targetCell.getCol() == parentStartColumn) { // main command process
+    // parent's afterApplyAtCell call after all child's afterApplyAtCell invoked.
+    @Override
+    public void afterApplyAtCell(CellRef cellRef, Context context) {
+      boolean isParentRow = cellRef.getCol() == parentStartColumn;
+
+      if (isParentRow) { // parent command excel-row
+        logger.debug("end parent: cellRef={} [{}, {}]", cellRef, cellRef.getRow(), cellRef.getCol());
+
+        // set parent-row position
         this.parentProcessed++;
 
-        logger.debug("parent: srcCell={}, targetCell={} [{}, {}]", srcCell, targetCell,
-          targetCell.getRow(), targetCell.getCol());
+        // record merge region only when more than one excel-row in the parent-row
+        if (cellRef.getRow() < this.childRow) this.records.add(new int[]{cellRef.getRow(), this.childRow});
 
-        //should be recorded just on necessary
-        if (targetCell.getRow() < this.childRow) this.records.add(new int[]{targetCell.getRow(), this.childRow});
-
-        // merge work invoke on the last
+        // only do the merge after last parent row
         if (this.parentProcessed == this.parentCount) {
           Workbook workbook = transformer.getWorkbook();
-          Sheet sheet = workbook.getSheet(sheetName);
-          doMerge(sheet, this.records, this.mergeColumns, srcCell);
+          Sheet sheet = workbook.getSheet(cellRef.getSheetName());
+          doMerge(sheet, this.records, this.mergeColumns, cellRef);
         }
+
+        // reset child excel-row index
         this.childRow = 0;
-
-        // record the current row number of sub command process
-      } else if (IntStream.of(childStartColumns).anyMatch(col -> col == targetCell.getCol())) {
-        this.childRow = Math.max(this.childRow, targetCell.getRow());
-
-        logger.debug("child: srcCell={}, targetCell={} [{}, {}]", srcCell, targetCell,
-          targetCell.getRow(), targetCell.getCol());
+      } else if (IntStream.of(childStartColumns).anyMatch(col -> col == cellRef.getCol())) { // sub command excel-row
+        if (logger.isDebugEnabled()) {
+          int subIndex = -1;
+          for (int i = 0; i < childStartColumns.length; i++) {
+            if (childStartColumns[i] == cellRef.getCol()) {
+              subIndex = i;
+              break;
+            }
+          }
+          logger.debug("  sub{}: cellRef={} [{}, {}]", subIndex, cellRef, cellRef.getRow(), cellRef.getCol());
+        }
+        // record the current excel-row index of sub command process
+        this.childRow = Math.max(this.childRow, cellRef.getRow());
       }
     }
 
