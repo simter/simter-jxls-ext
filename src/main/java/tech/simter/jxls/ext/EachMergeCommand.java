@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  * @author RJ
  */
 public class EachMergeCommand extends EachCommand {
-  private static Logger logger = LoggerFactory.getLogger(EachMergeCommand.class);
+  private static final Logger logger = LoggerFactory.getLogger(EachMergeCommand.class);
 
   public static final String COMMAND_NAME = "each-merge";
 
@@ -53,7 +53,6 @@ public class EachMergeCommand extends EachCommand {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Size applyAt(CellRef cellRef, Context context) {
     // collect sub command areas
     List<Area> childAreas = this.getAreaList().stream()
@@ -66,13 +65,13 @@ public class EachMergeCommand extends EachCommand {
     // register AreaListener for parent command area
     Area parentArea = this.getAreaList().get(0);
     MergeCellListener listener = new MergeCellListener(getTransformer(), parentArea.getAreaRef(), childAreaRefs,
-      ((Collection) context.getVar(this.getItems())).size()); // 总数据量
-    logger.info("register listener {} to {} from {}", listener, parentArea.getAreaRef(), cellRef);
+      ((Collection<?>) context.getVar(this.getItems())).size()); // 总数据量
+    logger.info("register MergeCellListener@{} for parent-area '{}', cellRef={}", listener.hashCode(), parentArea.getAreaRef(), cellRef);
     parentArea.addAreaListener(listener);
 
     // register AreaListener for all sub command area
     childAreas.forEach(area -> {
-      logger.info("register listener {} to {} by parent", listener, area.getAreaRef());
+      logger.info("register MergeCellListener@{} for child-area '{}', cellRef={}, parent={}", listener.hashCode(), area.getAreaRef(), cellRef, parentArea.getAreaRef());
       area.addAreaListener(listener);
     });
 
@@ -85,15 +84,14 @@ public class EachMergeCommand extends EachCommand {
    */
   public static class MergeCellListener implements AreaListener {
     private final PoiTransformer transformer;
-    private int parentStartColumn;                         // parent command start column
-    private int[] childStartColumns;                       // all sub command start column
+    private final int parentStartColumn;                   // parent command start column
+    private final int[] childStartColumns;                 // all sub command start column
     private final int[] mergeColumns;                      // to merge columns
     private final List<int[]> records = new ArrayList<>(); // 0 - start column, 1 - end column
-    private int parentCount;
+    private final int parentCount;
 
     private int childRow;
     private int parentProcessed;
-    private String sheetName;
 
     MergeCellListener(Transformer transformer, AreaRef parent, List<AreaRef> children, int parentCount) {
       this.transformer = (PoiTransformer) transformer;
@@ -127,51 +125,62 @@ public class EachMergeCommand extends EachCommand {
 
     @Override
     public void beforeApplyAtCell(CellRef cellRef, Context context) {
-    }
-
-    @Override
-    public void afterApplyAtCell(CellRef cellRef, Context context) {
+      if (logger.isDebugEnabled()) {
+        if (cellRef.getCol() == parentStartColumn) // parent command excel-row
+          logger.debug("start parent: cellRef={} [{}, {}]", cellRef, cellRef.getRow(), cellRef.getCol());
+      }
     }
 
     @Override
     public void beforeTransformCell(CellRef srcCell, CellRef targetCell, Context context) {
     }
 
-    // remember that all sub command AreaListener is invoked before parent command AreaListener.
-    // This class use this feature to do the merge work.
     @Override
     public void afterTransformCell(CellRef srcCell, CellRef targetCell, Context context) {
-      if (parentProcessed == 0) this.sheetName = targetCell.getSheetName();
+    }
 
-      if (targetCell.getCol() == parentStartColumn) { // main command process
+    // parent's afterApplyAtCell call after all child's afterApplyAtCell invoked.
+    @Override
+    public void afterApplyAtCell(CellRef cellRef, Context context) {
+      boolean isParentRow = cellRef.getCol() == parentStartColumn;
+
+      if (isParentRow) { // parent command excel-row
+        logger.debug("end parent: cellRef={} [{}, {}]", cellRef, cellRef.getRow(), cellRef.getCol());
+
+        // set parent-row position
         this.parentProcessed++;
 
-        logger.debug("parent: srcCell={}, targetCell={} [{}, {}]", srcCell, targetCell,
-          targetCell.getRow(), targetCell.getCol());
+        // record merge region only when more than one excel-row in the parent-row
+        if (cellRef.getRow() < this.childRow) this.records.add(new int[]{cellRef.getRow(), this.childRow});
 
-        //should be recorded just on necessary
-        if (targetCell.getRow() < this.childRow) this.records.add(new int[]{targetCell.getRow(), this.childRow});
-
-        // merge work invoke on the last
+        // only do the merge after last parent row
         if (this.parentProcessed == this.parentCount) {
           Workbook workbook = transformer.getWorkbook();
-          Sheet sheet = workbook.getSheet(sheetName);
-          doMerge(sheet, this.records, this.mergeColumns, srcCell);
+          Sheet sheet = workbook.getSheet(cellRef.getSheetName());
+          doMerge(sheet, this.records, this.mergeColumns, cellRef);
         }
+
+        // reset child excel-row index
         this.childRow = 0;
-
-        // record the current row number of sub command process
-      } else if (IntStream.of(childStartColumns).anyMatch(col -> col == targetCell.getCol())) {
-        this.childRow = Math.max(this.childRow, targetCell.getRow());
-
-        logger.debug("child: srcCell={}, targetCell={} [{}, {}]", srcCell, targetCell,
-          targetCell.getRow(), targetCell.getCol());
+      } else if (IntStream.of(childStartColumns).anyMatch(col -> col == cellRef.getCol())) { // sub command excel-row
+        if (logger.isDebugEnabled()) {
+          int subIndex = -1;
+          for (int i = 0; i < childStartColumns.length; i++) {
+            if (childStartColumns[i] == cellRef.getCol()) {
+              subIndex = i;
+              break;
+            }
+          }
+          logger.debug("  sub{}: cellRef={} [{}, {}]", subIndex, cellRef, cellRef.getRow(), cellRef.getCol());
+        }
+        // record the current excel-row index of sub command process
+        this.childRow = Math.max(this.childRow, cellRef.getRow());
       }
     }
 
     private static void doMerge(Sheet sheet, List<int[]> records, int[] mergeColumns, CellRef srcCell) {
       if (logger.isDebugEnabled()) {
-        logger.debug("merge: sheetName={}, records={}", sheet.getSheetName(),
+        logger.debug("start merge: sheetName={}, records={}", sheet.getSheetName(),
           records.stream().map(startEnd -> "[" + startEnd[0] + "," + startEnd[1] + "]")
             .collect(Collectors.joining(",")));
       }
@@ -180,29 +189,29 @@ public class EachMergeCommand extends EachCommand {
 
     private static void merge4Row(Sheet sheet, int fromRow, int toRow, int[] mergeColumns, CellRef srcCell) {
       if (fromRow >= toRow) {
-        logger.warn("No need to merge because same row：fromRow={}, toRow={}", fromRow, toRow);
+        logger.warn("  No need to merge because same row：fromRow={}, toRow={}", fromRow, toRow);
         return;
       }
       Cell originCell;
       CellStyle originCellStyle;
       CellRangeAddress region;
       for (int col : mergeColumns) {
-        logger.debug("fromRow={}, toRow={}, col={}", fromRow, toRow, col);
+        logger.debug("  fromRow={}, toRow={}, col={}", fromRow, toRow, col);
         region = new CellRangeAddress(fromRow, toRow, col, col);
         sheet.addMergedRegion(region);
 
         //firstCell = sheet.getRow(fromRow).getCell(col);
         originCell = sheet.getRow(srcCell.getRow()).getCell(col);
         if (originCell == null) {
-          logger.info("Missing cell: row={}, col={}", fromRow, col);
+          logger.info("  Missing cell: row={}, col={}", fromRow, col);
         }
         if (originCell != null) {
           // copy originCell style to the merged cell
           originCellStyle = originCell.getCellStyle();
-          RegionUtil.setBorderTop(originCellStyle.getBorderTopEnum(), region, sheet);
-          RegionUtil.setBorderRight(originCellStyle.getBorderRightEnum(), region, sheet);
-          RegionUtil.setBorderBottom(originCellStyle.getBorderBottomEnum(), region, sheet);
-          RegionUtil.setBorderLeft(originCellStyle.getBorderLeftEnum(), region, sheet);
+          RegionUtil.setBorderTop(originCellStyle.getBorderTop(), region, sheet);
+          RegionUtil.setBorderRight(originCellStyle.getBorderRight(), region, sheet);
+          RegionUtil.setBorderBottom(originCellStyle.getBorderBottom(), region, sheet);
+          RegionUtil.setBorderLeft(originCellStyle.getBorderLeft(), region, sheet);
         } else {
           RegionUtil.setBorderTop(BorderStyle.THIN, region, sheet);
           RegionUtil.setBorderRight(BorderStyle.THIN, region, sheet);

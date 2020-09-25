@@ -51,6 +51,7 @@ JxlsHelper.getInstance().processTemplate(template, output, context);
 ```
 
 Check the unit test code from [CommonFunctionsTest.java]. The [template][common-functions-template] and render result show bellow:
+
 ![common-functions.png]
 
 ### EachMergeCommand - Auto merge cells
@@ -86,6 +87,7 @@ The `generateRowsData()` method generates the bellow structure data:
 ```
 
 Check the unit test code from [EachMergeCommandTest.java]. The [template][each-merge-template] and render result show bellow:
+
 ![each-merge.png]
 
 ## Build

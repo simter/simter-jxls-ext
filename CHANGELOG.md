@@ -1,5 +1,13 @@
 # simter-jxls-ext changelog
 
+## 1.1.1 - 2020-09-25
+
+- Use afterApplyAtCell instead of afterTransformCell in EachMergeCommand
+
+> For jxls-2.6 parent's afterTransformCell is call after sub's afterTransformCell.
+> But change after jxls-2.7+. 
+> This change is for future compatibility.
+
 ## 2.0.0-M1 - 2020-06-02
 
 - Upgrade to simter-dependencies-2.0.0-M1
