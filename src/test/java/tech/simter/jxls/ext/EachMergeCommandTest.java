@@ -33,7 +33,7 @@ class EachMergeCommandTest {
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/each-merge.xlsx");
 
     // output to
-    File out = new File("target/each-merge-result.xlsx");
+    File out = new File("target/each-merge-result1.xlsx");
     if (out.exists()) out.delete();
     OutputStream output = new FileOutputStream(out);
 
@@ -53,7 +53,7 @@ class EachMergeCommandTest {
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/each-merge.xlsx");
 
     // output to
-    File out = new File("target/each-merge-result.xlsx");
+    File out = new File("target/each-merge-result2.xlsx");
     if (out.exists()) out.delete();
     OutputStream output = new FileOutputStream(out);
 
@@ -74,7 +74,7 @@ class EachMergeCommandTest {
     InputStream template = getClass().getClassLoader().getResourceAsStream("templates/each-merge2.xlsx");
 
     // output to
-    File out = new File("target/each-merge2-result.xlsx");
+    File out = new File("target/each-merge-result3.xlsx");
     if (out.exists()) out.delete();
     OutputStream output = new FileOutputStream(out);
 
