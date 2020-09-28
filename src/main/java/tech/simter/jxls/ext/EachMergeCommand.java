@@ -1,8 +1,10 @@
 package tech.simter.jxls.ext;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.RegionUtil;
 import org.jxls.area.Area;
 import org.jxls.command.CellRefGenerator;
 import org.jxls.command.EachCommand;
@@ -193,31 +195,24 @@ public class EachMergeCommand extends EachCommand {
         return;
       }
       Cell originCell;
-      CellStyle originCellStyle;
-      CellRangeAddress region;
       for (int col : mergeColumns) {
         logger.debug("  fromRow={}, toRow={}, col={}", fromRow, toRow, col);
-        region = new CellRangeAddress(fromRow, toRow, col, col);
-        sheet.addMergedRegion(region);
 
-        //firstCell = sheet.getRow(fromRow).getCell(col);
+        // set all merge-cells style to the origin cell style
         originCell = sheet.getRow(srcCell.getRow()).getCell(col);
-        if (originCell == null) {
-          logger.info("  Missing cell: row={}, col={}", fromRow, col);
+        for (int r = fromRow; r <= toRow; r++) {
+          Row row = sheet.getRow(r);
+          Cell cell = row.getCell(col);
+          if (cell == null) {
+            // create blank cell if not exists
+            // Note: if not create the blank cell, the merge region border style sometime loss
+            cell = row.createCell(col);
+          }
+          cell.setCellStyle(originCell.getCellStyle());
         }
-        if (originCell != null) {
-          // copy originCell style to the merged cell
-          originCellStyle = originCell.getCellStyle();
-          RegionUtil.setBorderTop(originCellStyle.getBorderTop(), region, sheet);
-          RegionUtil.setBorderRight(originCellStyle.getBorderRight(), region, sheet);
-          RegionUtil.setBorderBottom(originCellStyle.getBorderBottom(), region, sheet);
-          RegionUtil.setBorderLeft(originCellStyle.getBorderLeft(), region, sheet);
-        } else {
-          RegionUtil.setBorderTop(BorderStyle.THIN, region, sheet);
-          RegionUtil.setBorderRight(BorderStyle.THIN, region, sheet);
-          RegionUtil.setBorderBottom(BorderStyle.THIN, region, sheet);
-          RegionUtil.setBorderLeft(BorderStyle.THIN, region, sheet);
-        }
+
+        // do the merge
+        sheet.addMergedRegion(new CellRangeAddress(fromRow, toRow, col, col));
       }
     }
   }
