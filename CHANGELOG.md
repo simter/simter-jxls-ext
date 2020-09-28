@@ -1,5 +1,13 @@
 # simter-jxls-ext changelog
 
+## 2.0.0-M2 - 2020-09-28
+
+- Merge v1.1.1 change
+- Fixed merge cell style error
+    1. create blank cell if not exists
+    2. first set cell style
+    3. last do the merge
+
 ## 1.1.1 - 2020-09-25
 
 - Use afterApplyAtCell instead of afterTransformCell in EachMergeCommand
