@@ -65,9 +65,11 @@ public class EachMergeCommand extends EachCommand {
       .map(Area::getAreaRef).collect(Collectors.toList());
 
     // register AreaListener for parent command area
+    Collection<?> data = (Collection<?>) getTransformationConfig().getExpressionEvaluator()
+        .evaluate(this.getItems(), context.toMap());
     Area parentArea = this.getAreaList().get(0);
     MergeCellListener listener = new MergeCellListener(getTransformer(), parentArea.getAreaRef(), childAreaRefs,
-      ((Collection<?>) context.getVar(this.getItems())).size()); // 总数据量
+          data.size()); // 总数据量
     logger.info("register MergeCellListener@{} for parent-area '{}', cellRef={}", listener.hashCode(), parentArea.getAreaRef(), cellRef);
     parentArea.addAreaListener(listener);
 
