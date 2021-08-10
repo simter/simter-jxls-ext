@@ -89,6 +89,28 @@ class EachMergeCommandTest {
     assertThat(out.getTotalSpace()).isGreaterThan(0);
   }
 
+  @Test
+  void mergeWithExpression() throws Exception {
+    // template
+    InputStream template = getClass().getClassLoader().getResourceAsStream("templates/each-merge-with-expression.xlsx");
+
+    // output to
+    File out = new File("target/each-merge-result1.xlsx");
+    if (out.exists()) out.delete();
+    OutputStream output = new FileOutputStream(out);
+
+    // generate template data
+    Map<String, Object> wrapData = new HashMap<>();
+    wrapData.put("data", generateData());
+    Context context = convert2Context(wrapData);
+
+    // render
+    JxlsHelper.getInstance().processTemplate(template, output, context);
+
+    // verify
+    assertThat(out.getTotalSpace()).isGreaterThan(0);
+  }
+
   @SuppressWarnings("unchecked")
   private void copySubsToSubs1(Map<String, Object> data) {
     ((List<Map<String, Object>>) data.get("rows")).forEach(row -> {
