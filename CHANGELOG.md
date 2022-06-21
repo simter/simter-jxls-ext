@@ -1,5 +1,9 @@
 # simter-jxls-ext changelog
 
+## 3.0.0 - 2022-06-21
+
+- Upgrade to simter-dependencies-3.0.0 (jdk-17)
+
 ## 2.0.0 - 2020-11-19
 
 - Upgrade to simter-dependencies-2.0.0
