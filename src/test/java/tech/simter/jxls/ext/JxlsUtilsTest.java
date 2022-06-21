@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.math.RoundingMode.HALF_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -83,7 +84,7 @@ class JxlsUtilsTest {
       row.put("yearMonth", YearMonth.now());
       row.put("dateTime", LocalDateTime.now());
       row.put("str", "test");
-      row.put("money", new BigDecimal("100.01").add(new BigDecimal((float) i / 1000)).setScale(2, BigDecimal.ROUND_HALF_UP));
+      row.put("money", new BigDecimal("100.01").add(BigDecimal.valueOf((float) i / 1000)).setScale(2, HALF_UP));
       row.put("stage", i % 2);
       if (i % 2 == 0) {
         row.put("remark", "remark" + (i + 1));

@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.HALF_UP;
+
 /**
  * The common functions for jxls.
  * <p>
@@ -22,12 +24,12 @@ import java.util.stream.Collectors;
  * 3) concat string.<br>
  * 4) string to int.<br>
  * 5) join list to string.<br>
- * 6) join list'item property value to string.<br>
+ * 6) join list item property value to string.<br>
  *
  * @author RJ
  */
 public final class CommonFunctions {
-  private static CommonFunctions singleton = new CommonFunctions();
+  private static final CommonFunctions singleton = new CommonFunctions();
 
   public static CommonFunctions getSingleton() {
     return singleton;
@@ -55,7 +57,7 @@ public final class CommonFunctions {
    * If a section has a zero value, it is omitted.
    *
    * @param duration the duration
-   * @return if the duration is null, return null. Otherwise return an not null '{@code nDnHnMnS}' representation of this duration
+   * @return if the duration is null, return null. Otherwise, return an not null '{@code nDnHnMnS}' representation of this duration
    */
   public String format(Duration duration) {
     if (duration == null) return null;
@@ -79,7 +81,7 @@ public final class CommonFunctions {
   }
 
   /**
-   * Calculate two time's duration and format to a string with pattern '{@code nDnHnMnS}'.
+   * Calculate two times duration and format to a string with pattern '{@code nDnHnMnS}'.
    * <p>
    * The format of the returned string will be '{@code nDnHnMnS}', where n is
    * the relevant hours, minutes or seconds part of the duration.
@@ -87,7 +89,7 @@ public final class CommonFunctions {
    *
    * @param startTime the start time
    * @param endTime   the end time
-   * @return if the startTime or endTime is null, return null. Otherwise return an not null '{@code nDnHnMnS}' representation
+   * @return if the startTime or endTime is null, return null. Otherwise, return an not null '{@code nDnHnMnS}' representation
    */
   public String duration(Temporal startTime, Temporal endTime) {
     if (startTime == null || endTime == null) return null;
@@ -114,8 +116,8 @@ public final class CommonFunctions {
    */
   public Number round(Number number, int scale) {
     return number == null ? null : (number instanceof BigDecimal ?
-      ((BigDecimal) number).setScale(scale, BigDecimal.ROUND_HALF_UP)
-      : new BigDecimal(number.toString()).setScale(scale, BigDecimal.ROUND_HALF_UP));
+      ((BigDecimal) number).setScale(scale, HALF_UP)
+      : new BigDecimal(number.toString()).setScale(scale, HALF_UP));
   }
 
   /**
@@ -136,7 +138,7 @@ public final class CommonFunctions {
    * @return an Integer value
    */
   public Integer toInt(String str) {
-    return str == null ? null : new Integer(str);
+    return str == null ? null : Integer.valueOf(str);
   }
 
   /**
@@ -182,7 +184,7 @@ public final class CommonFunctions {
     return list.stream()
       .map(item -> {
         if (item != null) {
-          if (item instanceof Map) return ((Map) item).get(name); // 取 Map 中特定 key 的值
+          if (item instanceof Map) return ((Map<?, ?>) item).get(name); // 取 Map 中特定 key 的值
           else {                                                 // 取 bean 中特定属性的值
             try {
               return BeanUtils.getProperty(item, name);
